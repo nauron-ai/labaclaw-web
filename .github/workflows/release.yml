@@ -1,10 +1,12 @@
-name: CI
+name: Release
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   web:
@@ -24,8 +26,8 @@ jobs:
         env:
           VITE_API_BASE_URL: https://runtime.example.test
       - run: npm run package:release
-      - uses: actions/upload-artifact@v4
+        env:
+          LABACLAW_WEB_RELEASE_VERSION: ${{ github.ref_name }}
+      - uses: softprops/action-gh-release@v2
         with:
-          name: labaclaw-web-${{ github.sha }}
-          path: release/*.zip
-          if-no-files-found: error
+          files: release/*.zip

@@ -6,6 +6,7 @@ Standalone operator dashboard for `labaclaw`. This repo builds and deploys the S
 
 - Node.js 22+
 - npm
+- `zip` for packaging release artifacts
 - A running `labaclaw` runtime for interactive development
 
 ## Environment
@@ -44,6 +45,13 @@ Build for deployment:
 VITE_API_BASE_URL=https://claw.example.com npm run build
 ```
 
+Package a versioned release zip from the production build:
+
+```bash
+VITE_API_BASE_URL=https://claw.example.com npm run build
+npm run package:release
+```
+
 Preview a local production build:
 
 ```bash
@@ -76,6 +84,13 @@ Run the standalone CI-equivalent checks:
 ```bash
 npm run verify:standalone
 ```
+
+## Release Artifact
+
+- Local packaging writes `release/labaclaw-web-v0.1.0.zip` using the version from `package.json`.
+- Override the artifact label with `LABACLAW_WEB_RELEASE_VERSION` or `LABACLAW_WEB_RELEASE_NAME` when needed.
+- CI uploads the generated zip as a GitHub Actions artifact on every `main` push and pull request build.
+- Pushing a `v*` tag publishes the same zip as a GitHub Release asset.
 
 ## Deploy Notes
 
