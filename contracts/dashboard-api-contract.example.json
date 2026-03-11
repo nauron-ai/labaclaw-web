@@ -1,0 +1,29 @@
+{
+  "name": "labaclaw-dashboard-contract",
+  "version": "0.1.0",
+  "endpoints": [
+    { "transport": "http", "method": "GET", "path": "/health" },
+    { "transport": "http", "method": "POST", "path": "/pair" },
+    { "transport": "http", "method": "GET", "path": "/api/status" },
+    { "transport": "http", "method": "GET", "path": "/api/health" },
+    { "transport": "http", "method": "GET", "path": "/api/config" },
+    { "transport": "http", "method": "PUT", "path": "/api/config" },
+    { "transport": "http", "method": "GET", "path": "/api/tools" },
+    { "transport": "http", "method": "GET", "path": "/api/cron" },
+    { "transport": "http", "method": "POST", "path": "/api/cron" },
+    { "transport": "http", "method": "DELETE", "path": "/api/cron/{id}" },
+    { "transport": "http", "method": "GET", "path": "/api/integrations" },
+    { "transport": "http", "method": "GET", "path": "/api/integrations/settings" },
+    { "transport": "http", "method": "PUT", "path": "/api/integrations/{integrationId}/credentials" },
+    { "transport": "http", "method": "POST", "path": "/api/doctor" },
+    { "transport": "http", "method": "GET", "path": "/api/memory" },
+    { "transport": "http", "method": "POST", "path": "/api/memory" },
+    { "transport": "http", "method": "DELETE", "path": "/api/memory/{key}" },
+    { "transport": "http", "method": "GET", "path": "/api/pairing/devices" },
+    { "transport": "http", "method": "DELETE", "path": "/api/pairing/devices/{id}" },
+    { "transport": "http", "method": "GET", "path": "/api/cost" },
+    { "transport": "http", "method": "GET", "path": "/api/cli-tools" },
+    { "transport": "sse", "method": "GET", "path": "/api/events" },
+    { "transport": "ws", "path": "/ws/chat" }
+  ]
+}

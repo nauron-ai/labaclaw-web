@@ -83,7 +83,7 @@ function PairingDialog({ onPair }: { onPair: (code: string) => Promise<void> }) 
 }
 
 function AppContent() {
-  const { isAuthenticated, loading, pair, logout } = useAuth();
+  const { isAuthenticated, loading, pair, logout, startupError, retryStartupCheck, runtimeTarget } = useAuth();
   const [locale, setLocaleState] = useState<Locale>(() => {
     if (typeof window === 'undefined') {
       return 'en';
@@ -123,6 +123,37 @@ function AppContent() {
         <div className="flex flex-col items-center gap-3">
           <div className="electric-loader h-10 w-10 rounded-full" />
           <p className="text-[#a7c4f3]">Connecting...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (startupError) {
+    return (
+      <div className="pairing-shell min-h-screen flex items-center justify-center px-4">
+        <div className="pairing-card w-full max-w-xl rounded-2xl p-8">
+          <div className="mb-6 text-center">
+            <h1 className="mb-2 text-2xl font-semibold tracking-[0.16em] pairing-brand">ZEROCLAW</h1>
+            <p className="text-sm text-[#9bb8e8]">Runtime startup check failed</p>
+          </div>
+          <div className="space-y-4">
+            <p className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+              {startupError}
+            </p>
+            <div className="rounded-xl border border-[#29509c] bg-[#071228]/90 px-4 py-3 text-sm text-[#9bb8e8]">
+              <span className="font-medium text-white">Runtime target:</span>{' '}
+              <span className="break-all">{runtimeTarget}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                void retryStartupCheck();
+              }}
+              className="electric-button w-full rounded-xl py-3 font-medium text-white"
+            >
+              Retry connection
+            </button>
+          </div>
         </div>
       </div>
     );

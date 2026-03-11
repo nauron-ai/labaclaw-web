@@ -1,5 +1,5 @@
 {
-  "name": "zeroclaw-web",
+  "name": "labaclaw-web",
   "private": true,
   "version": "0.1.0",
   "license": "(MIT OR Apache-2.0)",
@@ -10,7 +10,11 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:mobile-smoke": "node ./scripts/mobile-smoke-runner.mjs"
+    "test:mobile-smoke": "node ./scripts/mobile-smoke-runner.mjs",
+    "contract:check": "node ./scripts/verify-contract.mjs",
+    "contract:check:fixture": "node ./scripts/verify-contract.mjs ./contracts/dashboard-api-contract.example.json",
+    "verify": "npm run contract:check && npm test && npm run build",
+    "verify:standalone": "npm run contract:check:fixture && npm test && npm run build"
   },
   "dependencies": {
     "@codemirror/language": "^6.12.2",

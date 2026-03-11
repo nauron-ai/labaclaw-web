@@ -3,8 +3,10 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
+const runtimeHttpTarget = "http://127.0.0.1:42617";
+const runtimeWsTarget = "ws://127.0.0.1:42617";
+
 export default defineConfig({
-  base: "/_app/",
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -16,16 +18,20 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      "/health": {
+        target: runtimeHttpTarget,
+        changeOrigin: true,
+      },
       "/pair": {
-        target: "http://localhost:42617",
+        target: runtimeHttpTarget,
         changeOrigin: true,
       },
       "/api": {
-        target: "http://localhost:42617",
+        target: runtimeHttpTarget,
         changeOrigin: true,
       },
       "/ws": {
-        target: "ws://localhost:42617",
+        target: runtimeWsTarget,
         ws: true,
       },
     },

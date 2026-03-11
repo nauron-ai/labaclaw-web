@@ -12,6 +12,7 @@ import type {
   HealthSnapshot,
 } from '../types/api';
 import { clearToken, getToken, setToken } from './auth';
+import { resolveApiUrl } from './runtimeConfig';
 
 // ---------------------------------------------------------------------------
 // Base fetch wrapper
@@ -43,7 +44,7 @@ export async function apiFetch<T = unknown>(
     headers.set('Content-Type', 'application/json');
   }
 
-  const response = await fetch(path, { ...options, headers });
+  const response = await fetch(resolveApiUrl(path), { ...options, headers });
 
   if (response.status === 401) {
     clearToken();
@@ -79,7 +80,7 @@ function unwrapField<T>(value: T | Record<string, T>, key: string): T {
 // ---------------------------------------------------------------------------
 
 export async function pair(code: string): Promise<{ token: string }> {
-  const response = await fetch('/pair', {
+  const response = await fetch(resolveApiUrl('/pair'), {
     method: 'POST',
     headers: { 'X-Pairing-Code': code },
   });
@@ -99,7 +100,7 @@ export async function pair(code: string): Promise<{ token: string }> {
 // ---------------------------------------------------------------------------
 
 export async function getPublicHealth(): Promise<{ require_pairing: boolean; paired: boolean }> {
-  const response = await fetch('/health');
+  const response = await fetch(resolveApiUrl('/health'));
   if (!response.ok) {
     throw new Error(`Health check failed (${response.status})`);
   }

@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+language: en-US
+early_access: false
+
+reviews:
+  request_changes_workflow: false
+  high_level_summary: true
+  sequence_diagrams: false
+
+  auto_review:
+    enabled: true
+    base_branches:
+      - main
+    drafts: false
+
+  poem: false
+  suggested_reviewers: true
+  auto_assign_reviewers: false
+
+  path_filters:
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+
+  path_instructions:
+    - path: "src/**/*.{ts,tsx}"
+      instructions: |
+        Prioritize separate-origin correctness and transport consistency.
+        Flag any regression that assumes same-origin for HTTP, SSE, or WebSocket access.
+        Keep runtime contract ownership in labaclaw; frontend changes should consume, not redefine, transport shapes.
+        Prefer small, explicit config utilities over scattering URL normalization through components.
+        Call out state persistence or auth handling that could leak or orphan bearer tokens.
+
+    - path: "scripts/**/*.mjs"
+      instructions: |
+        Treat contract verification scripts as release-safety tooling.
+        Flag brittle path assumptions, weak validation, and silent success conditions.
+
+chat:
+  auto_reply: true

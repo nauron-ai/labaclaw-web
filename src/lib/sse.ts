@@ -1,11 +1,12 @@
 import type { SSEEvent } from '../types/api';
 import { getToken } from './auth';
+import { resolveApiUrl } from './runtimeConfig';
 
 export type SSEEventHandler = (event: SSEEvent) => void;
 export type SSEErrorHandler = (error: Event | Error) => void;
 
 export interface SSEClientOptions {
-  /** Endpoint path. Defaults to "/api/events". */
+  /** Endpoint path or absolute URL. Defaults to the runtime event stream endpoint. */
   path?: string;
   /** Delay in ms before attempting reconnect. Doubles on each failure up to maxReconnectDelay. */
   reconnectDelay?: number;
@@ -17,6 +18,14 @@ export interface SSEClientOptions {
 
 const DEFAULT_RECONNECT_DELAY = 1000;
 const MAX_RECONNECT_DELAY = 30000;
+
+function resolveEventStreamUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) {
+    return path;
+  }
+
+  return resolveApiUrl(path);
+}
 
 /**
  * SSE client that connects to the ZeroClaw event stream.
@@ -41,7 +50,7 @@ export class SSEClient {
   private readonly autoReconnect: boolean;
 
   constructor(options: SSEClientOptions = {}) {
-    this.path = options.path ?? '/api/events';
+    this.path = resolveEventStreamUrl(options.path ?? '/api/events');
     this.reconnectDelay = options.reconnectDelay ?? DEFAULT_RECONNECT_DELAY;
     this.maxReconnectDelay = options.maxReconnectDelay ?? MAX_RECONNECT_DELAY;
     this.autoReconnect = options.autoReconnect ?? true;

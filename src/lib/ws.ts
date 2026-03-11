@@ -1,5 +1,6 @@
 import type { WsMessage } from '../types/api';
 import { getToken } from './auth';
+import { resolveWsBaseUrl } from './runtimeConfig';
 
 export type WsMessageHandler = (msg: WsMessage) => void;
 export type WsOpenHandler = () => void;
@@ -7,7 +8,7 @@ export type WsCloseHandler = (ev: CloseEvent) => void;
 export type WsErrorHandler = (ev: Event) => void;
 
 export interface WebSocketClientOptions {
-  /** Base URL override. Defaults to current host with ws(s) protocol. */
+  /** Base URL override. Accepts ws(s):// or http(s):// and is normalized to WebSocket transport. */
   baseUrl?: string;
   /** Delay in ms before attempting reconnect. Doubles on each failure up to maxReconnectDelay. */
   reconnectDelay?: number;
@@ -20,6 +21,22 @@ export interface WebSocketClientOptions {
 const DEFAULT_RECONNECT_DELAY = 1000;
 const MAX_RECONNECT_DELAY = 30000;
 const WS_SESSION_STORAGE_KEY = 'zeroclaw.ws.session_id';
+
+function normalizeBaseUrl(value: string): string {
+  const parsed = new URL(value);
+  if (parsed.protocol === 'http:') {
+    parsed.protocol = 'ws:';
+  } else if (parsed.protocol === 'https:') {
+    parsed.protocol = 'wss:';
+  } else if (parsed.protocol !== 'ws:' && parsed.protocol !== 'wss:') {
+    throw new Error(`Invalid WebSocket base URL: ${value}`);
+  }
+
+  parsed.pathname = '';
+  parsed.search = '';
+  parsed.hash = '';
+  return parsed.toString().replace(/\/$/, '');
+}
 
 export class WebSocketClient {
   private ws: WebSocket | null = null;
@@ -39,9 +56,9 @@ export class WebSocketClient {
   private readonly sessionId: string;
 
   constructor(options: WebSocketClientOptions = {}) {
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    this.baseUrl =
-      options.baseUrl ?? `${protocol}//${window.location.host}`;
+    this.baseUrl = options.baseUrl
+      ? normalizeBaseUrl(options.baseUrl)
+      : resolveWsBaseUrl();
     this.reconnectDelay = options.reconnectDelay ?? DEFAULT_RECONNECT_DELAY;
     this.maxReconnectDelay = options.maxReconnectDelay ?? MAX_RECONNECT_DELAY;
     this.autoReconnect = options.autoReconnect ?? true;
